@@ -1,5 +1,6 @@
 /*
  * Command-notification
+ * Copyright (C) 2016  jonasc
  * Copyright (C) 2010  Guy Sheffer
  * Copyright (C) 2006  Simo Mattila
  *
@@ -46,11 +47,15 @@
 void command_set(gboolean state) {
 	const char *filename=purple_prefs_get_string(
 	                                 "/plugins/gtk/gtk-simom-comnot/filename");
+	const char *filename2=purple_prefs_get_string(
+	                                 "/plugins/gtk/gtk-simom-comnot/filename2");
 	FILE *file=NULL;
-	
-	//Here is the command that would be ran if there is a new message
+
+	// Execute either command
 	if (state){
-	  file = popen (filename, "w");
+		file = popen (filename, "w");
+	} else {
+		file = popen (filename2, "w");
 	}
 }
 
@@ -61,7 +66,7 @@ GList *get_pending_list(guint max) {
 	GList *l_im = NULL;
 	GList *l_chat = NULL;
 
-	
+
 	if (im != NULL && strcmp(im, "always") == 0) {
 		l_im = pidgin_conversations_find_unseen_list(PURPLE_CONV_TYPE_IM,
 		                                             PIDGIN_UNSEEN_TEXT,
@@ -90,7 +95,7 @@ GList *get_pending_list(guint max) {
 		return l_chat;
 }
 
-static void comnot_conversation_updated(PurpleConversation *conv, 
+static void comnot_conversation_updated(PurpleConversation *conv,
                                         PurpleConvUpdateType type) {
 	GList *list;
 
@@ -145,8 +150,11 @@ static GtkWidget *plugin_config_frame(PurplePlugin *plugin) {
 	                        NULL);
 	gtk_size_group_add_widget(sg, dd);
 
-	ent=pidgin_prefs_labeled_entry(vbox2,"Command to exacute on message:",
+	ent=pidgin_prefs_labeled_entry(vbox2,"Execute on new unread message:",
 	                              "/plugins/gtk/gtk-simom-comnot/filename",sg);
+
+	ent=pidgin_prefs_labeled_entry(vbox2,"Execute when everything is read:",
+	                              "/plugins/gtk/gtk-simom-comnot/filename2",sg);
 
 	gtk_widget_show_all(frame);
 	return frame;
@@ -157,7 +165,9 @@ static void init_plugin(PurplePlugin *plugin) {
 	purple_prefs_add_string("/plugins/gtk/gtk-simom-comnot/im", "always");
 	purple_prefs_add_string("/plugins/gtk/gtk-simom-comnot/chat", "nick");
 	purple_prefs_add_string("/plugins/gtk/gtk-simom-comnot/filename",
-	                        "python /home/guy/stuff/scripts/matrix.py pidgin");
+                            "/usr/local/bin/blink-start");
+	purple_prefs_add_string("/plugins/gtk/gtk-simom-comnot/filename2",
+                            "/usr/local/bin/blink-stop");
 }
 
 static gboolean plugin_load(PurplePlugin *plugin) {
@@ -195,8 +205,8 @@ static PurplePluginInfo info = {
     VERSION,
 
     "Command notification for pidgin",
-    "Will exacute a command in pidgin to notify on an new message",
-    "Guy Sheffer <guysoft@gmail.com>",
+    "Will execute a command in pidgin to notify on an new message",
+    "Guy Sheffer <guysoft@gmail.com>, jonasc <https://github.com/jonasc/command-notification>",
     "http://guysoft.wordpress.com",
 
     plugin_load,   /* load */
