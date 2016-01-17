@@ -2,7 +2,8 @@ Command-notification, a Pidgin plugin
 ----------------
 
 Command-notification is a small rewrite of the plugin by Simo Mattila called led-notification
-It will let you exacute a given command when a new message is receved
+It will let you exacute a given command when a new message is received and a
+second command when all notifications are gone.
 
 Simo Mattila <simo.h.mattila@gmail.com>
 http://koti.mbnet.fi/simom/
@@ -10,8 +11,15 @@ http://koti.mbnet.fi/simom/
 Guy Sheffer <guysoft@gmail.com>
 http://guysoft.wordpress.com
 
+jonasc <github.com@bcdf.eu>
+https://github.com/jonasc
+
 
 Changelog:
+
+Version 0.2
+
+    * Added second command to be run when notifications are gone
 
 Version 0.1
 
